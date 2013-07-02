@@ -162,22 +162,21 @@ OpenSSL附带了一组可信任证书，它们位于源文件树的certs目录�
 ##错误检测
 OpenSSL在运行过程中会遇到问题时，会出现错误，捕捉这些错误，是程序员的责任。如何捕捉错误呢，OpenSSL给我们提供了函数`Err_get_error()`，该函数返回错误代码，然后通过函数`SSL_load_error_strings()`或`ERR_load_BIO_strings()`获得错误代码对应的字符串。
 
-<table border="1" class="code">
-	<tr><th>函数</th><th>描述</th><tr>
-	<tr><td>ERR_reason_error_string</td><td>返回一个描述错误的字符串</td><tr>
-	<tr><td>ERR_lib_error_string</td><td>指出错误发生在哪个库中</td><tr>
-	<tr><td>ERR_func_error_string</td><td>返回导致错误的OpenSSL函数</td><tr>
-	<tr><td>SSL_load_error_strings</td><td>返回一个描述错误的字符串</td></tr>
-	<tr><td>ERR_load_BIO_strings</td><td>返回一个描述错误的字符串</td></tr>
-	<tr><td>ERR_error_string</td><td>返回一个描述错误的字符串，该函数将错误代码和一个预分配的缓冲区作为参数。而这个缓冲区必须是 256 字节长。如果该参数为NULL，则OpenSSL会将字符串写入到一个长度为256字节的静态缓冲区中，并返回指向该缓冲区的指针。下一次调用ERR_error_string时，静态缓冲区会被覆盖。</td></tr>
-	<tr><td>ERR_print_errors</td><td>将错误信息输出到BIO指针</td></tr>
-	<tr><td>ERR_print_errors_fp</td><td>将错误信息输出到FILE文件指针</td></tr>
-</table>
+	* 函数描述
+	* ERR_reason_error_string	返回一个描述错误的字符串
+	* ERR_lib_error_string	指出错误发生在哪个库中
+	* ERR_func_error_string	返回导致错误的OpenSSL函数
+	* SSL_load_error_strings	返回一个描述错误的字符串
+	* ERR_load_BIO_strings	返回一个描述错误的字符串
+	* ERR_error_string	返回一个描述错误的字符串，该函数将错误代码和一个预分配的缓冲区作为参数。而这个缓冲区必须是 256 字节长。如果该参数为NULL，则OpenSSL会将字符串写入到一个长度为256字节的静态缓冲区中，并返回指向该缓冲区的指针。下一次调用ERR_error_string时，静态缓冲区会被覆盖。
+	* ERR_print_errors	将错误信息输出到BIO指针
+	* ERR_print_errors_fp	将错误信息输出到FILE文件指针
+
 表中将错误信息输出到BIO或者FILE的格式如下：
 
-\[pid]:error:[error code]:[library name]:[function name]:[reason string]:[file name]:[line]:[optional text message]
+\[pid\]:error:\[error code\]:\[library name\]:\[function name\]:\[reason string\]:\[file name\]:\[line\]:\[optional text message\]
 
-其中，[pid] 是进程 ID，[error code] 是一个8位十六进制代码，[file name]是 OpenSSL库中的源代码文件，[line]是源文件中的行号。
+其中，\[pid\] 是进程 ID，\[error code\] 是一个8位十六进制代码，\[file name\]是 OpenSSL库中的源代码文件，\[line\]是源文件中的行号。
 
 	:::c
 	/* 打印出最后一个错误 */
@@ -187,4 +186,5 @@ OpenSSL在运行过程中会遇到问题时，会出现错误，捕捉这些错�
 	/* 转储错误队列 */
 	ERR_print_errors_fp(FILE *);
 	ERR_print_errors(BIO *);
+
 在这里介绍的仅仅是OpenSSL最基础的功能，OpenSSL还有很多需要学习。
