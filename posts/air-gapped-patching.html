@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Air-Gapped Patching & Deployment | Alex</title>
+    <meta name="description" content="Strategies and workflows for maintaining system updates, compliance, and patch management across strict offline setups.">
+    
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body class="bg-slate-900 text-slate-100 antialiased selection:bg-sky-500 selection:text-white min-h-screen flex flex-col justify-between">
+
+    <div class="max-w-3xl mx-auto px-6 py-8 w-full">
+        <!-- Header -->
+        <header class="flex justify-between items-center pb-6 border-b border-slate-800">
+            <a href="../index.html" class="text-xl font-bold tracking-tight text-white hover:text-sky-400 transition">
+                Xusheng (Alex)<span class="text-sky-400">.Li</span>
+            </a>
+            <nav class="flex gap-6 text-sm font-medium text-slate-400">
+                <a href="../index.html#articles" class="hover:text-sky-400 transition">Articles</a>
+                <a href="../index.html#focus" class="hover:text-sky-400 transition">Core Focus</a>
+                <a href="../about.html" class="hover:text-sky-400 transition">About</a>
+            </nav>
+        </header>
+
+        <!-- Main Content -->
+        <main class="py-10">
+            <a href="../index.html#articles" class="text-sky-400 text-sm font-semibold hover:underline flex items-center gap-1 mb-4">← Back to Articles</a>
+            
+            <header class="mb-8 border-b border-slate-800 pb-6">
+                <span class="text-xs font-semibold uppercase tracking-wider text-sky-400">Security & Operations • SysOps</span>
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mt-2 mb-3">
+                    Automated Patching and Software Deployment in Air-Gapped Environments
+                </h1>
+                <p class="text-xs text-slate-500">Date: September 2024 • Author: Alex</p>
+            </header>
+
+            <article class="space-y-6 text-slate-300 text-base leading-relaxed">
+                <p>
+                    In high-security enterprise domains—such as defense, energy, or critical industrial controls—systems are physically isolated from public networks (Air-Gapped). Maintaining patch management, security updates, and software deployments without public repository access demands strict operational procedures.
+                </p>
+
+                <h2 class="text-xl font-bold text-white tracking-tight pt-4">1. Establishing Offline Mirror Repositories</h2>
+                <p>
+                    Deploying an internal, air-gapped package repository allows local servers to fetch security patches and system updates over secure internal networks.
+                </p>
+                <ul class="list-disc list-inside space-y-2 text-slate-300 pl-2">
+                    <li><strong class="text-white">Staging Sync:</strong> Secure staging machine downloads verified updates from upstream vendor repositories.</li>
+                    <li><strong class="text-white">Cryptographic Verification:</strong> All RPM/Debian packages and binaries undergo SHA-256 and GPG key verification prior to import.</li>
+                    <li><strong class="text-white">Air-Gap Transfer Protocol:</strong> Updates are transferred into isolated networks via encrypted, read-only media following strict audit logging.</li>
+                </ul>
+
+                <h2 class="text-xl font-bold text-white tracking-tight pt-4">2. Automated On-Premise Patch Workflows</h2>
+                <p>
+                    Using localized configuration management tools (such as Ansible playbooks), system patches and security updates are rolled out systematically across staging, testing, and production servers without internet connectivity.
+                </p>
+
+                <h2 class="text-xl font-bold text-white tracking-tight pt-4">3. Verification & Compliance Logging</h2>
+                <p>
+                    Every software push or kernel update generates immutable audit records. Post-patch automated validation scripts run integration tests to guarantee operational uptime before final user acceptance sign-off.
+                </p>
+            </article>
+        </main>
+
+        <!-- Footer -->
+        <footer class="pt-8 border-t border-slate-800 text-xs text-slate-500 flex justify-between items-center">
+            <p>© 2026 Alex. Built with Tailwind CSS & GitHub Pages.</p>
+            <a href="../index.html" class="text-slate-400 hover:text-sky-400 transition">← Home</a>
+        </footer>
+    </div>
+
+</body>
+</html>

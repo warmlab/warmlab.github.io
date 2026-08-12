@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Designing a Disaster Recovery Plan for Enterprises | Alex</title>
+    <meta name="description" content="A practical framework for IT leaders on business continuity planning, defining RPO/RTO metrics, multi-region backup topologies, and ransomware resilience.">
+    
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body class="bg-slate-900 text-slate-100 antialiased selection:bg-sky-500 selection:text-white min-h-screen flex flex-col justify-between">
+
+    <div class="max-w-3xl mx-auto px-6 py-8 w-full">
+        <!-- Header -->
+        <header class="flex justify-between items-center pb-6 border-b border-slate-800">
+            <a href="../index.html" class="text-xl font-bold tracking-tight text-white hover:text-sky-400 transition">
+                Xusheng (Alex)<span class="text-sky-400">.Li</span>
+            </a>
+            <nav class="flex gap-6 text-sm font-medium text-slate-400">
+                <a href="../index.html#articles" class="hover:text-sky-400 transition">Articles</a>
+                <a href="../index.html#focus" class="hover:text-sky-400 transition">Core Focus</a>
+                <a href="../about.html" class="hover:text-sky-400 transition">About</a>
+            </nav>
+        </header>
+
+        <!-- Main Content -->
+        <main class="py-10">
+            <a href="../index.html#articles" class="text-sky-400 text-sm font-semibold hover:underline flex items-center gap-1 mb-4">← Back to Articles</a>
+            
+            <header class="mb-8 border-b border-slate-800 pb-6">
+                <span class="text-xs font-semibold uppercase tracking-wider text-sky-400">IT Governance & Resilience • Strategy</span>
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mt-2 mb-3">
+                    Designing a Disaster Recovery & Business Continuity Plan for Enterprises
+                </h1>
+                <p class="text-xs text-slate-500">Date: May 2026 • Author: Alex</p>
+            </header>
+
+            <article class="space-y-6 text-slate-300 text-base leading-relaxed">
+                <p>
+                    System outages, hardware failures, cyberattacks, and regional natural disasters pose existential risks to modern digital organizations. For enterprise IT leaders, a robust <strong>Disaster Recovery (DR) and Business Continuity Plan (BCP)</strong> is not merely a compliance checklist item—it is an operational insurance policy designed to guarantee organizational resilience under extreme stress.
+                </p>
+
+                <h2 class="text-xl font-bold text-white tracking-tight pt-4">1. Aligning Technical Metrics with Business Reality: RPO vs. RTO</h2>
+                <p>
+                    Designing an effective DR architecture begins with translating business impacts into clear engineering objectives. Achieving "zero downtime" is cost-prohibitive for most applications; therefore, workloads must be categorized based on critical operational thresholds.
+                </p>
+                
+                <div class="p-4 bg-slate-800/80 border border-slate-700/80 rounded-xl font-mono text-xs text-slate-200 overflow-x-auto my-6">
+                    <div class="text-slate-400 border-b border-slate-700 pb-2 mb-2 font-semibold">Tiered Disaster Recovery Matrix:</div>
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="text-sky-400 border-b border-slate-700">
+                                <th class="py-2 pr-4">Tier Level</th>
+                                <th class="py-2 pr-4">Target Workloads</th>
+                                <th class="py-2 pr-4">RPO (Data Loss Window)</th>
+                                <th class="py-2">RTO (Recovery Time Window)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800">
+                            <tr>
+                                <td class="py-2 pr-4 font-semibold text-white">Tier 0 (Mission Critical)</td>
+                                <td class="py-2 pr-4">Transactional DBs, Auth Gateways</td>
+                                <td class="py-2 pr-4 text-emerald-400">&lt; 1 Minute (Sync Replication)</td>
+                                <td class="py-2 text-emerald-400">&lt; 15 Minutes (Auto Failover)</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2 pr-4 font-semibold text-white">Tier 1 (Core Operations)</td>
+                                <td class="py-2 pr-4">ERP Systems, Core Business APIs</td>
+                                <td class="py-2 pr-4 text-sky-400">&lt; 1 Hour</td>
+                                <td class="py-2 text-sky-400">&lt; 4 Hours</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2 pr-4 font-semibold text-white">Tier 2 (Internal/Non-Critical)</td>
+                                <td class="py-2 pr-4">Reporting Tools, Staging Environments</td>
+                                <td class="py-2 pr-4 text-slate-400">&lt; 24 Hours</td>
+                                <td class="py-2 text-slate-400">&lt; 48 Hours</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h2 class="text-xl font-bold text-white tracking-tight pt-4">2. The Modern Backup Standard: 3-2-1-1-0 Strategy</h2>
+                <p>
+                    Traditional backup routines fail against modern ransomware that explicitly targets secondary backup catalogs. Enterprise IT governance requires adopting the hardened <strong>3-2-1-1-0 rule</strong>:
+                </p>
+                <ul class="list-disc list-inside space-y-2 text-slate-300 pl-2">
+                    <li><strong class="text-white">3 Copies of Data:</strong> One primary production dataset and two distinct backup copies.</li>
+                    <li><strong class="text-white">2 Different Media Types:</strong> Storing data across separate physical architectures (e.g., local NVMe SAN + Cloud Object Storage).</li>
+                    <li><strong class="text-white">1 Offsite Location:</strong> Maintaining a copy geographically distant from the primary data center.</li>
+                    <li><strong class="text-white">1 Immutable / Air-Gapped Copy:</strong> Utilizing S3 Object Lock (WORM - Write Once Read Many) or physically air-gapped media to prevent ransomware deletion.</li>
+                    <li><strong class="text-white">0 Unverified Errors:</strong> Automated daily recovery verification testing to ensure backup integrity.</li>
+                </ul>
+
+                <h2 class="text-xl font-bold text-white tracking-tight pt-4">3. Active-Passive vs. Multi-Region Active-Active Topology</h2>
+                <p>
+                    Choosing between high-availability topologies involves balancing cost with recovery automation:
+                </p>
+                <ul class="list-disc list-inside space-y-2 text-slate-300 pl-2">
+                    <li><strong class="text-white">Warm Standby / Pilot Light (Active-Passive):</strong> Core databases continuously sync to a secondary region while application servers remain scaled down until a failover event occurs. Highly cost-effective for Tier 1 enterprise services.</li>
+                    <li><strong class="text-white">Multi-Region Active-Active:</strong> Traffic is dynamically routed via DNS/Anycast across geographically separated clusters. Provides zero-downtime protection but introduces significant data synchronization complexity.</li>
+                </ul>
+
+                <h2 class="text-xl font-bold text-white tracking-tight pt-4">4. Validation: Conducting Unannounced Disaster Drills</h2>
+                <p>
+                    A Disaster Recovery plan is only as reliable as its last successful drill. Experienced IT managers schedule biannual simulated failovers to test runbooks, verify DNS propagation speed, and evaluate team communication protocols during off-hours incident scenarios.
+                </p>
+            </article>
+        </main>
+
+        <!-- Footer -->
+        <footer class="pt-8 border-t border-slate-800 text-xs text-slate-500 flex justify-between items-center">
+            <p>© 2026 Alex. Built with Tailwind CSS & GitHub Pages.</p>
+            <a href="../index.html" class="text-slate-400 hover:text-sky-400 transition">← Home</a>
+        </footer>
+    </div>
+
+</body>
+</html>

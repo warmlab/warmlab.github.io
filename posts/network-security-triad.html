@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Layered Network Defense: Nmap, Snort, and nftables | Alex</title>
+    <meta name="description" content="An operational framework combining Nmap for surface discovery, Snort for intrusion detection, and nftables for active enforcement.">
+    
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body class="bg-slate-900 text-slate-100 antialiased selection:bg-sky-500 selection:text-white min-h-screen flex flex-col justify-between">
+
+    <div class="max-w-3xl mx-auto px-6 py-8 w-full">
+        <!-- Header -->
+        <header class="flex justify-between items-center pb-6 border-b border-slate-800">
+            <a href="../index.html" class="text-xl font-bold tracking-tight text-white hover:text-sky-400 transition">
+                Xusheng (Alex)<span class="text-sky-400">.Li</span>
+            </a>
+            <nav class="flex gap-6 text-sm font-medium text-slate-400">
+                <a href="../index.html#articles" class="hover:text-sky-400 transition">Articles</a>
+                <a href="../index.html#focus" class="hover:text-sky-400 transition">Core Focus</a>
+                <a href="../about.html" class="hover:text-sky-400 transition">About</a>
+            </nav>
+        </header>
+
+        <!-- Main Content -->
+        <main class="py-10">
+            <a href="../index.html#articles" class="text-sky-400 text-sm font-semibold hover:underline flex items-center gap-1 mb-4">← Back to Articles</a>
+            
+            <header class="mb-8 border-b border-slate-800 pb-6">
+                <span class="text-xs font-semibold uppercase tracking-wider text-sky-400">Security & Operations • Hands-on Guide</span>
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mt-2 mb-3">
+                    Building a Layered Network Defense: Nmap, Snort, and nftables in Practice
+                </h1>
+                <p class="text-xs text-slate-500">Date: April 2025 • Author: Alex</p>
+            </header>
+
+            <article class="space-y-6 text-slate-300 text-base leading-relaxed">
+                <p>
+                    Enterprise network security relies on defense-in-depth—a layered framework that ensures no single control failure compromises the environment. Combining <strong class="text-white">Nmap</strong> for surface auditing, <strong class="text-white">Snort</strong> for real-time threat detection, and <strong class="text-white">nftables</strong> for high-performance packet filtering forms an agile, open-source network defense loop.
+                </p>
+
+                <h2 class="text-xl font-bold text-white tracking-tight pt-4">1. Proactive Surface Auditing with Nmap</h2>
+                <p>Before defending a network, security teams must understand their exposure. Nmap serves as the primary tool for discoverability, asset inventory, and service fingerprinting.</p>
+                <ul class="list-disc list-inside space-y-2 text-slate-300 pl-2">
+                    <li><strong class="text-white">Stealth & Service Discovery:</strong> Identifying open ports, protocol versions, and operating systems across internal subnets.</li>
+                    <li><strong class="text-white">Vulnerability Scripting (NSE):</strong> Automating targeted vulnerability scans for misconfigurations and outdated service daemons.</li>
+                </ul>
+
+                <pre class="p-4 bg-slate-800/80 border border-slate-700/80 rounded-xl font-mono text-xs text-sky-300 overflow-x-auto leading-normal">
+<span class="text-slate-500"># Comprehensive SYN scan with service versioning and OS fingerprinting</span>
+nmap -sS -sV -O -p- --min-rate 1000 192.168.1.0/24
+
+<span class="text-slate-500"># Executing default security audit scripts against targeted services</span>
+nmap -sV --script=vuln,auth 192.168.1.50
+                </pre>
+
+                <h2 class="text-xl font-bold text-white tracking-tight pt-4">2. Deep Packet Inspection & Intrusion Detection via Snort</h2>
+                <p>While port auditing reveals open doors, Snort acts as the IDS/IPS alarm system, inspecting raw packet payloads in real-time to flag malicious behavior, protocol anomalies, and signatures of known exploits.</p>
+
+                <pre class="p-4 bg-slate-800/80 border border-slate-700/80 rounded-xl font-mono text-xs text-sky-300 overflow-x-auto leading-normal">
+<span class="text-slate-500"># Example Snort 3 Rule: Flagging TCP connection spikes (SSH Brute Force)</span>
+alert tcp $EXTERNAL_NET any -> $HOME_NET 22 ( \
+    msg:"POSSIBLE SSH BRUTE FORCE ATTEMPT"; \
+    flags:S; \
+    threshold: type threshold, track by_src, count 5, seconds 60; \
+    sid:1000001; rev:1; )
+                </pre>
+
+                <h2 class="text-xl font-bold text-white tracking-tight pt-4">3. Perimeter Enforcement with Modern nftables</h2>
+                <p>Replacing legacy <code class="bg-slate-800 text-sky-400 px-1.5 py-0.5 rounded text-xs">iptables</code>, Linux <code class="bg-slate-800 text-sky-400 px-1.5 py-0.5 rounded text-xs">nftables</code> offers a unified syntax, faster lookup evaluation, and atomic rule updates directly inside the kernel network stack. Once Snort detects suspicious traffic, <code class="bg-slate-800 text-sky-400 px-1.5 py-0.5 rounded text-xs">nftables</code> acts as the enforcement layer to drop or rate-limit rogue sources.</p>
+
+                <pre class="p-4 bg-slate-800/80 border border-slate-700/80 rounded-xl font-mono text-xs text-sky-300 overflow-x-auto leading-normal">
+<span class="text-slate-500"># Enterprise nftables baseline configuration (/etc/nftables.conf)</span>
+table inet filter {
+    chain input {
+        type filter hook input priority filter; policy drop;
+
+        <span class="text-slate-500"># Accept loopback & established connections</span>
+        iif "lo" accept
+        ct state established,related accept
+
+        <span class="text-slate-500"># Rate-limit SSH connections to mitigate brute-force</span>
+        tcp dport 22 meter ssh_meter { ip saddr limit rate 5/minute } accept
+
+        <span class="text-slate-500"># Allow Web traffic</span>
+        tcp dport { 80, 443 } accept
+    }
+}
+                </pre>
+
+                <h2 class="text-xl font-bold text-white tracking-tight pt-4">4. The Unified Defense Workflow</h2>
+                <p>By coupling these tools into an operational workflow, security operations (SecOps) achieve an active feedback loop:</p>
+                <ul class="list-disc list-inside space-y-2 text-slate-300 pl-2">
+                    <li><strong class="text-white">Audit:</strong> Scheduled <code class="text-xs bg-slate-800 px-1 rounded text-sky-400">Nmap</code> scans identify unexpected open ports or shadow IT assets.</li>
+                    <li><strong class="text-white">Detect:</strong> <code class="text-xs bg-slate-800 px-1 rounded text-sky-400">Snort</code> continuously monitors ingress and egress traffic against signatures and behavioral thresholds.</li>
+                    <li><strong class="text-white">Enforce:</strong> Automated scripts or SOAR playbooks update <code class="text-xs bg-slate-800 px-1 rounded text-sky-400">nftables</code> rules dynamically to block malicious IP sources upon Snort triggers.</li>
+                </ul>
+            </article>
+        </main>
+
+        <!-- Footer -->
+        <footer class="pt-8 border-t border-slate-800 text-xs text-slate-500 flex justify-between items-center">
+            <p>© 2026 Alex. Built with Tailwind CSS & GitHub Pages.</p>
+            <a href="../index.html" class="text-slate-400 hover:text-sky-400 transition">← Home</a>
+        </footer>
+    </div>
+
+</body>
+</html>

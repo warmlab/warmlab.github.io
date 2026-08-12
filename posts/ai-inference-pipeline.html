@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Architecting Server-Side AI Pipelines | Alex</title>
+    <meta name="description" content="Design patterns for integrating machine learning models into existing enterprise server architectures.">
+    
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body class="bg-slate-900 text-slate-100 antialiased selection:bg-sky-500 selection:text-white min-h-screen flex flex-col justify-between">
+
+    <div class="max-w-3xl mx-auto px-6 py-8 w-full">
+        <!-- Header -->
+        <header class="flex justify-between items-center pb-6 border-b border-slate-800">
+            <a href="../index.html" class="text-xl font-bold tracking-tight text-white hover:text-sky-400 transition">
+                Xusheng (Alex)<span class="text-sky-400">.Li</span>
+            </a>
+            <nav class="flex gap-6 text-sm font-medium text-slate-400">
+                <a href="../index.html#articles" class="hover:text-sky-400 transition">Articles</a>
+                <a href="../index.html#focus" class="hover:text-sky-400 transition">Core Focus</a>
+                <a href="../about.html" class="hover:text-sky-400 transition">About</a>
+            </nav>
+        </header>
+
+        <!-- Main Content -->
+        <main class="py-10">
+            <a href="../index.html#articles" class="text-sky-400 text-sm font-semibold hover:underline flex items-center gap-1 mb-4">← Back to Articles</a>
+            
+            <header class="mb-8 border-b border-slate-800 pb-6">
+                <span class="text-xs font-semibold uppercase tracking-wider text-sky-400">AI & Backend Integration • Engineering</span>
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mt-2 mb-3">
+                    Architecting Server-Side AI Inference Pipelines for Enterprise Backends
+                </h1>
+                <p class="text-xs text-slate-500">Date: November 2025 • Author: Alex</p>
+            </header>
+
+            <article class="space-y-6 text-slate-300 text-base leading-relaxed">
+                <p>
+                    Integrating Machine Learning and AI inference models into existing enterprise server architectures introduces unique challenges regarding API latency, GPU memory allocation, and thread concurrency.
+                </p>
+
+                <h2 class="text-xl font-bold text-white tracking-tight pt-4">1. Decoupling Web Gateway from Model Inference</h2>
+                <p>
+                    Directly serving model inference inside synchronous web servers leads to blocked event loops and poor throughput. The recommended enterprise architecture isolates the web API gateway from the worker inference queue.
+                </p>
+
+                <pre class="p-4 bg-slate-800/80 border border-slate-700/80 rounded-xl font-mono text-xs text-slate-200 overflow-x-auto leading-normal">
+Client Request ──> REST Gateway (Nginx/FastAPI)
+                        │
+                        ▼ (Asynchronous Redis/RabbitMQ)
+               ┌────────────────────────┐
+               │ Model Worker Cluster   │
+               │ (vLLM / ONNX Runtime)  │
+               └────────────────────────┘
+                </pre>
+
+                <h2 class="text-xl font-bold text-white tracking-tight pt-4">2. Optimizing Server-Side Linear Algebra Execution</h2>
+                <p>
+                    Model execution relies heavily on dense matrix multiplications. By leveraging BLAS library optimization, FP16/INT8 quantization, and hardware-accelerated vectorization, server-side CPU/GPU memory footprint can be reduced by up to 60% without significant precision loss.
+                </p>
+
+                <h2 class="text-xl font-bold text-white tracking-tight pt-4">3. Security & Rate Limiting Controls</h2>
+                <ul class="list-disc list-inside space-y-2 text-slate-300 pl-2">
+                    <li><strong class="text-white">Token Authentication & TLS Encryption:</strong> Restricting endpoint access via OAuth2 and JWT validation.</li>
+                    <li><strong class="text-white">Concurrency Throttling:</strong> Enforcing dynamic queue limits to prevent server OOM (Out Of Memory) crashes during peak usage.</li>
+                </ul>
+            </article>
+        </main>
+
+        <!-- Footer -->
+        <footer class="pt-8 border-t border-slate-800 text-xs text-slate-500 flex justify-between items-center">
+            <p>© 2026 Alex. Built with Tailwind CSS & GitHub Pages.</p>
+            <a href="../index.html" class="text-slate-400 hover:text-sky-400 transition">← Home</a>
+        </footer>
+    </div>
+
+</body>
+</html>

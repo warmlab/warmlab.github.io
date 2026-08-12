@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Homepage -->
+  <url>
+    <loc>https://warmlab.github.io/</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  
+  <!-- About Page -->
+  <url>
+    <loc>https://warmlab.github.io/about.html</loc>
+    <lastmod>2026-07-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- FinOps Governance -->
+  <url>
+    <loc>https://warmlab.github.io/posts/finops-cost-governance.html</loc>
+    <lastmod>2026-08-02</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Disaster Recovery Plan -->
+  <url>
+    <loc>https://warmlab.github.io/posts/disaster-recovery-plan.html</loc>
+    <lastmod>2026-05-19</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- VPS Benchmark -->
+  <url>
+    <loc>https://warmlab.github.io/posts/vps-benchmark.html</loc>
+    <lastmod>2026-02-14</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- AI Inference Pipeline -->
+  <url>
+    <loc>https://warmlab.github.io/posts/ai-inference-pipeline.html</loc>
+    <lastmod>2025-11-08</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Network Security Triad -->
+  <url>
+    <loc>https://warmlab.github.io/posts/network-security-triad.html</loc>
+    <lastmod>2025-04-23</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Air-Gapped Patching -->
+  <url>
+    <loc>https://warmlab.github.io/posts/air-gapped-patching.html</loc>
+    <lastmod>2024-09-17</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+</urlset>
