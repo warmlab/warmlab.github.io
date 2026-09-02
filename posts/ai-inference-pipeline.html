@@ -67,6 +67,62 @@ Client Request ──> REST Gateway (Nginx/FastAPI)
                     <li><strong class="text-white">Token Authentication & TLS Encryption:</strong> Restricting endpoint access via OAuth2 and JWT validation.</li>
                     <li><strong class="text-white">Concurrency Throttling:</strong> Enforcing dynamic queue limits to prevent server OOM (Out Of Memory) crashes during peak usage.</li>
                 </ul>
+                <!-- Section: Dataset Governance & Analytics for AI/ML -->
+                <h2 class="text-xl font-bold text-white tracking-tight pt-6">Dataset Governance & Analytics: The Foundation of Reliable Models</h2>
+                <p>
+                    Building production-grade AI inference pipelines requires more than optimizing latency and GPU memory. The operational ceiling of any ML model is bounded by training data quality. Implementing structured <strong>Dataset Governance and Analytics</strong> ensures that data pipelines remain deterministic, secure, and compliant before models ever reach deployment.
+                </p>
+
+                <ul class="list-disc list-inside space-y-2 text-slate-300 pl-2">
+                    <li><strong class="text-white">Exploratory Data Analytics (EDA) & Quality Gates:</strong> Automated validation protocols intercept missing values, class imbalances, and distribution anomalies prior to training triggers, eliminating "garbage-in, garbage-out" failures.</li>
+                    <li><strong class="text-white">Dataset Versioning & Lineage (DVC):</strong> Tying specific code commits, model weights, and exact training dataset versions together guarantees full end-to-end reproducibility and auditability across release cycles.</li>
+                    <li><strong class="text-white">Data Anonymization & PII Masking:</strong> Enforcing strict role-based access controls (RBAC), tokenization, and privacy sanitization ensures sensitive enterprise and user data never leaks into vector stores or baseline weights.</li>
+                </ul>
+
+                <!-- Dataset Governance Matrix Table -->
+                <div class="p-4 bg-slate-800/80 border border-slate-700/80 rounded-xl font-mono text-xs text-slate-200 overflow-x-auto my-6">
+                    <div class="text-slate-400 border-b border-slate-700 pb-2 mb-2 font-semibold">Data Governance & Analytics Strategy Matrix:</div>
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                        <tr class="text-sky-400 border-b border-slate-700">
+                            <th class="py-2 pr-4">Governance Pillar</th>
+                            <th class="py-2 pr-4">Core Mechanism</th>
+                            <th class="py-2 pr-4">Target Metric / Goal</th>
+                            <th class="py-2">Engineering Tooling</th>
+                        </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800">
+                        <tr>
+                            <td class="py-2 pr-4 font-semibold text-white">Quality Control</td>
+                            <td class="py-2 pr-4">Data validation assertions & drift detection</td>
+                            <td class="py-2 pr-4 text-emerald-400">&lt; 0.1% Null / Anomaly Ratio</td>
+                            <td class="py-2">Great Expectations, Pandas</td>
+                        </tr>
+                        <tr>
+                            <td class="py-2 pr-4 font-semibold text-white">Versioning & Audit</td>
+                            <td class="py-2 pr-4">Immutable dataset snapshots & lineage tracking</td>
+                            <td class="py-2 pr-4 text-sky-400">100% Reproducible Builds</td>
+                            <td class="py-2">DVC, Git LFS, S3 Versioning</td>
+                        </tr>
+                        <tr>
+                            <td class="py-2 pr-4 font-semibold text-white">Security & Privacy</td>
+                            <td class="py-2 pr-4">PII sanitization & encrypted storage at rest</td>
+                            <td class="py-2 pr-4 text-emerald-400">Zero Leakage Compliance</td>
+                            <td class="py-2">Vault, KMS, Presidio</td>
+                        </tr>
+                        <tr>
+                            <td class="py-2 pr-4 font-semibold text-white">Storage FinOps</td>
+                            <td class="py-2 pr-4">Hot/Cold lifecycle tiering (Active vs Archive)</td>
+                            <td class="py-2 pr-4 text-sky-400">30%–50% Storage Cost Drop</td>
+                            <td class="py-2">S3 Lifecycle Rules, Parquet Conversion</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p class="text-sm text-slate-400 italic">
+                    By treating datasets as first-class software artifacts with rigorous lifecycle management, technical teams can systematically reduce model drift, accelerate training loops, and maintain enterprise security boundaries.
+                </p>
             </article>
         </main>
 

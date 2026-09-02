@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <!-- 1. Basic Metadata -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Articles | Xusheng Li</title>
+
+  <!-- 2. Standard SEO Meta Tags -->
+  <meta name="title" content="All Articles | Xusheng Li">
+  <meta name="description" content="A comprehensive collection of technical guides, architecture benchmarks, and IT management frameworks by Xusheng (Alex) Li.">
+  <meta name="author" content="Xusheng (Alex) Li">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://warmlab.github.io/articles.html">
+
+  <!-- 3. Open Graph / Social Cards -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://warmlab.github.io/articles.html">
+  <meta property="og:title" content="All Articles | Xusheng Li">
+  <meta property="og:description" content="Technical guides, enterprise architecture benchmarks, and IT strategy frameworks.">
+  <meta property="og:image" content="https://warmlab.github.io/favicon.svg">
+
+  <!-- 4. Favicon -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+  <!-- 5. Tailwind CSS CDN & Custom CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-900 text-slate-100 antialiased selection:bg-sky-500 selection:text-white min-h-screen flex flex-col justify-between">
+
+<!-- Container -->
+<div class="max-w-3xl mx-auto px-6 py-8 w-full">
+
+  <!-- Header / Navbar -->
+  <header class="flex justify-between items-center pb-6 border-b border-slate-800">
+    <a href="index.html" class="text-xl font-bold tracking-tight text-white hover:text-sky-400 transition">
+      Xusheng (Alex)<span class="text-sky-400">.Li</span>
+    </a>
+    <nav class="flex gap-6 text-sm font-medium text-slate-400">
+      <a href="index.html" class="hover:text-sky-400 transition">Home</a>
+      <a href="articles.html" class="text-sky-400 font-semibold">All Articles</a>
+      <a href="about.html" class="hover:text-sky-400 transition">About</a>
+    </nav>
+  </header>
+
+  <!-- Page Hero Section -->
+  <section class="py-10">
+    <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white mb-3">
+      Technical Articles & Guides
+    </h1>
+    <p class="text-slate-400 text-base leading-relaxed">
+      A complete archive of 9 articles covering IT governance, cloud cost optimization, enterprise security, and software engineering architecture.
+    </p>
+  </section>
+
+  <!-- Articles Section -->
+  <section id="articles" class="space-y-12">
+
+    <!-- Category 1: IT Management & Strategy (3 Articles) -->
+    <div>
+      <div class="flex items-center gap-4 mb-6">
+        <h2 class="text-xl font-bold text-white shrink-0 flex items-center gap-2">
+          <span class="text-sky-400">💼</span> IT Management & Strategy
+        </h2>
+        <div class="h-[1px] w-full bg-slate-800"></div>
+      </div>
+
+      <div class="space-y-4">
+        <!-- Article 1 -->
+        <article class="p-5 bg-slate-800/50 hover:bg-slate-800 border border-slate-800 hover:border-sky-500/50 rounded-xl transition group">
+          <div class="text-xs font-medium text-slate-400 mb-1">IT Governance & Financials • Strategy</div>
+          <h3 class="text-lg font-semibold text-white group-hover:text-sky-400 transition mb-2">
+            <a href="posts/finops-cost-governance.html">FinOps for IT Leaders: Eliminating Cloud & SaaS Waste</a>
+          </h3>
+          <p class="text-slate-400 text-sm leading-relaxed">
+            A strategic framework for IT managers to eliminate shadow IT, optimize cloud infrastructure spend, and establish unit economic accountability across business units.
+          </p>
+        </article>
+
+        <!-- Article 2 -->
+        <article class="p-5 bg-slate-800/50 hover:bg-slate-800 border border-slate-800 hover:border-sky-500/50 rounded-xl transition group">
+          <div class="text-xs font-medium text-slate-400 mb-1">IT Governance & Resilience • Strategy</div>
+          <h3 class="text-lg font-semibold text-white group-hover:text-sky-400 transition mb-2">
+            <a href="posts/disaster-recovery-plan.html">Designing a Disaster Recovery & Business Continuity Plan for Enterprises</a>
+          </h3>
+          <p class="text-slate-400 text-sm leading-relaxed">
+            A practical guide for IT managers on establishing RPO/RTO targets, deploying immutable 3-2-1-1-0 backup architectures, and conducting ransomware resilience testing.
+          </p>
+        </article>
+
+        <!-- Article 3 -->
+        <article class="p-5 bg-slate-800/50 hover:bg-slate-800 border border-slate-800 hover:border-sky-500/50 rounded-xl transition group">
+          <div class="text-xs font-medium text-slate-400 mb-1">Security & Operations • SysOps</div>
+          <h3 class="text-lg font-semibold text-white group-hover:text-sky-400 transition mb-2">
+            <a href="posts/air-gapped-patching.html">Automated Patching and Software Deployment in Air-Gapped Environments</a>
+          </h3>
+          <p class="text-slate-400 text-sm leading-relaxed">
+            Strategies and workflows for maintaining system updates, compliance, and patch management across strict offline or physically isolated infrastructure setups.
+          </p>
+        </article>
+      </div>
+    </div>
+
+    <!-- Category 2: Software Engineering & Systems Architecture (5 Articles) -->
+    <div>
+      <div class="flex items-center gap-4 mb-6">
+        <h2 class="text-xl font-bold text-white shrink-0 flex items-center gap-2">
+          <span class="text-sky-400">⚡</span> Engineering & Systems Architecture
+        </h2>
+        <div class="h-[1px] w-full bg-slate-800"></div>
+      </div>
+
+      <div class="space-y-4">
+        <!-- Article 4 -->
+        <article class="p-5 bg-slate-800/50 hover:bg-slate-800 border border-slate-800 hover:border-sky-500/50 rounded-xl transition group">
+          <div class="text-xs font-medium text-slate-400 mb-1">Data Engineering • Architecture & Performance</div>
+          <h3 class="text-lg font-semibold text-white group-hover:text-sky-400 transition mb-2">
+            <a href="posts/parquet-rust-zstd-data-lake.html">Modern Data Lake Essentials: Boosting Storage and Query Performance with Parquet, Rust, and ZSTD</a>
+          </h3>
+          <p class="text-slate-400 text-sm leading-relaxed">
+            A benchmark and architectural guide exploring Parquet and ZSTD compression, high-performance Rust reader/writer implementations, Athena vs Spark queries, and AWS S3 lifecycle management.
+          </p>
+        </article>
+
+        <article class="p-5 bg-slate-800/50 hover:bg-slate-800 border border-slate-800 hover:border-sky-500/50 rounded-xl transition group">
+          <div class="text-xs font-medium text-slate-400 mb-1">CLI & Networking • Developer Reference</div>
+          <h3 class="text-lg font-semibold text-white group-hover:text-sky-400 transition mb-2">
+            <a href="posts/curl-command.html">cURL Command Reference & libcurl Developer Guide</a>
+          </h3>
+          <p class="text-slate-400 text-sm leading-relaxed">
+            A comprehensive guide covering cURL CLI usage, advanced HTTP/FTP file transfers, SSL/mTLS authentication, performance metrics, and C libcurl integration.
+          </p>
+        </article>
+
+        <!-- Article 5 -->
+        <article class="p-5 bg-slate-800/50 hover:bg-slate-800 border border-slate-800 hover:border-sky-500/50 rounded-xl transition group">
+          <div class="text-xs font-medium text-slate-400 mb-1">Security & Cryptography • Reference</div>
+          <h3 class="text-lg font-semibold text-white group-hover:text-sky-400 transition mb-2">
+            <a href="posts/openssl-guide.html">OpenSSL & PKI Reference Guide</a>
+          </h3>
+          <p class="text-slate-400 text-sm leading-relaxed">
+            Practical workflows for private key generation, CSR signing, X.509 certificate management, internal CA creation, and TLS handshake debugging.
+          </p>
+        </article>
+
+        <!-- Article 6 -->
+        <article class="p-5 bg-slate-800/50 hover:bg-slate-800 border border-slate-800 hover:border-sky-500/50 rounded-xl transition group">
+          <div class="text-xs font-medium text-slate-400 mb-1">AI & Backend Integration • Engineering</div>
+          <h3 class="text-lg font-semibold text-white group-hover:text-sky-400 transition mb-2">
+            <a href="posts/ai-inference-pipeline.html">Architecting Server-Side AI Inference Pipelines</a>
+          </h3>
+          <p class="text-slate-400 text-sm leading-relaxed">
+            Key design patterns for integrating machine learning models into existing enterprise server architectures, securing API endpoints, and optimizing execution latency.
+          </p>
+        </article>
+
+        <!-- Article 7 -->
+        <article class="p-5 bg-slate-800/50 hover:bg-slate-800 border border-slate-800 hover:border-sky-500/50 rounded-xl transition group">
+          <div class="text-xs font-medium text-slate-400 mb-1">Security & Operations • Best Practices</div>
+          <h3 class="text-lg font-semibold text-white group-hover:text-sky-400 transition mb-2">
+            <a href="posts/network-security-triad.html">Building a Layered Network Defense: Nmap, Snort, and nftables in Practice</a>
+          </h3>
+          <p class="text-slate-400 text-sm leading-relaxed">
+            An operational framework combining Nmap for surface discovery, Snort for intrusion detection, and nftables for active kernel-level threat enforcement.
+          </p>
+        </article>
+
+        <!-- Article 8 -->
+        <article class="p-5 bg-slate-800/50 hover:bg-slate-800 border border-slate-800 hover:border-sky-500/50 rounded-xl transition group">
+          <div class="text-xs font-medium text-slate-400 mb-1">Architecture & Cloud • Benchmarks</div>
+          <h3 class="text-lg font-semibold text-white group-hover:text-sky-400 transition mb-2">
+            <a href="posts/vps-benchmark.html">Benchmarking VPS vs Cloud Infrastructure for Enterprise Workloads</a>
+          </h3>
+          <p class="text-slate-400 text-sm leading-relaxed">
+            A detailed cost-performance analysis comparing AWS, Azure, and dedicated VPS providers, focusing on network latency, IOPS, and SLA reliability for middle-market deployments.
+          </p>
+        </article>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Footer -->
+  <footer class="mt-16 pt-8 border-t border-slate-800 text-sm text-slate-400">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 pb-8">
+      <div>
+        <a href="index.html" class="text-base font-bold text-white">Xusheng (Alex)<span class="text-sky-400">.Li</span></a>
+        <p class="mt-2 text-xs leading-relaxed">IT & Technical Leader with 10+ years of experience in enterprise infrastructure, cybersecurity, cloud operations, and AI integration.</p>
+      </div>
+      <div>
+        <h4 class="font-semibold text-white mb-3 text-xs tracking-wider uppercase">Navigation</h4>
+        <ul class="space-y-2 text-xs">
+          <li><a href="index.html" class="hover:text-sky-400 transition">Home</a></li>
+          <li><a href="articles.html" class="text-sky-400 font-medium">All Articles</a></li>
+          <li><a href="about.html" class="hover:text-sky-400 transition">About Me</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-semibold text-white mb-3 text-xs tracking-wider uppercase">Connect</h4>
+        <ul class="space-y-2 text-xs">
+          <li><a href="https://github.com/warmlab" target="_blank" class="hover:text-sky-400 transition">GitHub ↗</a></li>
+          <li><a href="mailto:xusheng.ca@gmail.com" class="hover:text-sky-400 transition">Email ↗</a></li>
+          <li><span class="text-slate-500">Calgary, AB, Canada</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="pt-6 border-t border-slate-800/60 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs">
+      <p>© 2026 Alex. Built with Tailwind CSS & GitHub Pages.</p>
+      <a href="#" class="hover:text-sky-400 transition">Back to top ↑</a>
+    </div>
+  </footer>
+
+</div>
+
+</body>
+</html>

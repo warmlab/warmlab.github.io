@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cURL Command & libcurl Developer Guide</title>
+    <meta name="description" content="A comprehensive reference guide for using cURL CLI tool and integrating libcurl C library for HTTP, FTP, SSL, proxying, and file transfer operations.">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Intel One Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Intel+One+Mono:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+
+    <!-- Highlight.js Syntax Highlighting (Tokyo Night Dark Theme) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/c.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+
+    <!-- External Stylesheet -->
+    <link rel="stylesheet" href="../style.css">
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            hljs.highlightAll();
+        });
+    </script>
+</head>
+<body class="bg-slate-900 text-slate-100 antialiased selection:bg-sky-500 selection:text-white min-h-screen flex flex-col justify-between">
+
+<div class="max-w-3xl mx-auto px-6 py-8 w-full">
+    <!-- Header -->
+    <header class="flex justify-between items-center pb-6 border-b border-slate-800">
+        <a href="../index.html" class="text-xl font-bold tracking-tight text-white hover:text-sky-400 transition">
+            Xusheng (Alex)<span class="text-sky-400">.Li</span>
+        </a>
+        <nav class="flex gap-6 text-sm font-medium text-slate-400">
+            <a href="../index.html#articles" class="hover:text-sky-400 transition">Articles</a>
+            <a href="../index.html#focus" class="hover:text-sky-400 transition">Core Focus</a>
+            <a href="../about.html" class="hover:text-sky-400 transition">About</a>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="py-10">
+        <a href="../index.html#articles" class="text-sky-400 text-sm font-semibold hover:underline flex items-center gap-1 mb-4">← Back to Articles</a>
+
+        <header class="mb-8 border-b border-slate-800 pb-6">
+            <span class="text-xs font-semibold uppercase tracking-wider text-sky-400">CLI & Networking Development Tools</span>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mt-2 mb-3">
+                cURL Command Reference & libcurl Developer Guide
+            </h1>
+            <p class="text-xs text-slate-500">Updated: September 2026 • Comprehensive Reference Guide</p>
+        </header>
+
+        <article class="space-y-6 text-slate-300 text-base leading-relaxed">
+            <p>
+                <a href="http://curl.haxx.se/" class="text-sky-400 underline hover:text-sky-300">cURL</a> is a command-line utility used for transferring data via URLs. It supports a broad range of protocols including DICT, FILE, FTP, FTPS, Gopher, HTTP, HTTPS, IMAP, IMAPS, LDAP, LDAPS, POP3, POP3S, RTMP, RTSP, SCP, SFTP, SMTP, SMTPS, Telnet, and TFTP.
+            </p>
+            <p>
+                It natively handles SSL certificates, HTTP POST/PUT operations, FTP/HTTP uploads, proxies, cookies, user authentication (Basic, Digest, NTLM, Negotiate, Kerberos), proxy tunneling, and other advanced networking tasks. Below is a categorized reference of essential cURL usage patterns and libcurl C library integration.
+            </p>
+
+            <!-- 1. Viewing Web Page Source Code -->
+            <h2 id="basics" class="text-xl font-bold text-white tracking-tight pt-4">1. Viewing Web Page Source Code</h2>
+            <p>
+                By default, cURL outputs the response body directly to standard output (<code class="text-sky-400 font-mono">stdout</code>). You can redirect output to a file or follow HTTP redirects.
+            </p>
+            <pre class="p-4 bg-slate-800/80 border border-slate-700/80 rounded-xl text-xs overflow-x-auto leading-normal"><code class="language-bash font-mono"># Output web page HTML source code to stdout
+curl www.example.com
+
+# Redirect output to a file or specify output filename with -o (displays download progress)
+curl www.example.com > example.html
+curl -o example.html www.example.com
+
+# Automatically follow URL redirects using -L / --location
+curl -L www.google.com</code></pre>
+
+            <!-- 2. Downloading Files -->
+            <h2 class="text-xl font-bold text-white tracking-tight pt-4">2. Downloading Files</h2>
+            <p>
+                Download files by specifying a custom local filename (<code class="text-sky-400 font-mono">-o</code>) or keeping the original filename from the remote server (<code class="text-sky-400 font-mono">-O</code>).
+            </p>
+            <pre class="p-4 bg-slate-800/80 border border-slate-700/80 rounded-xl text-xs overflow-x-auto leading-normal"><code class="language-bash font-mono"># Specify custom output filename with -o
+curl -o font.zip http://font.ubuntu.com/download/ubuntu-font-family-0.80.zip
+
+# Preserve remote filename using -O (uppercase O), similar to wget
+curl -O http://font.ubuntu.com/download/ubuntu-font-family-0.80.zip</code></pre>
+
+            <p><strong class="text-white">Batch Downloads & Pattern Matching:</strong></p>
+            <pre class="p-4 bg-slate-800/80 border border-slate-700/80 rounded-xl text-xs overflow-x-auto leading-normal"><code class="language-bash font-mono"># Download multiple files sequentially
+curl -O http://www.example.com/img1/img[0-9].png
+
+# Download files across multiple directories
+curl -O http://www.example.com/{img1,img2}/img[0-9].png
+
+# Prevent overwriting files across directories using pattern variables (#1, #2)
+curl -o #2_#1.png http://www.example.com/{img1,img2}/img[0-9].png
+# Output filenames: img1_img0.png, img2_img0.png, etc.</code></pre>
+
+            <p><strong class="text-white">Resuming Interrupted Downloads & Chunking:</strong></p>
+            <pre class="p-4 bg-slate-800/80 border border-slate-700/80 rounded-xl text-xs overflow-x-auto leading-normal"><code class="language-bash font-mono"># Check local file size in bytes
+wc -c ubuntu-font-family-0.80.zip
+# Example output: 20480 ubuntu-font-family-0.80.zip
+
+# Resume download from byte offset (-C offset)
+curl -C 20480 -O http://font.ubuntu.com/download/ubuntu-font-family-0.80.zip
+
+# Download specific byte ranges using -r / --range (in bytes)
+curl -r 0-10240 -o part1 http://font.ubuntu.com/download/ubuntu-font-family-0.80.zip
+curl -r 10240-20480 -o part2 http://font.ubuntu.com/download/ubuntu-font-family-0.80.zip
+curl -r 20480- -o part3 http://font.ubuntu.com/download/ubuntu-font-family-0.80.zip
+
+# Merge chunked files into a single archive
+cat part[123] > ubuntu-font-family-0.80.zip</code></pre>
+
+            <p><strong class="text-white">FTP Downloads:</strong></p>
+            <pre class="p-4 bg-slate-800/80 border border-slate-700/80 rounded-xl text-xs overflow-x-auto leading-normal"><code class="language-bash font-mono"># Anonymous FTP download
+curl -O ftp://ftp.software.ibm.com/software/PCLW32_EN_IB_0012.zip
+
+# Authenticated FTP download
+curl -u "user:password" -O ftp://example.com/path/file
+curl -O ftp://user:password@example.com/path/file</code></pre>
+
+            <!-- 3. Uploading Files -->
+            <h2 id="http-methods" class="text-xl font-bold text-white tracking-tight pt-4">3. Uploading Files (PUT / FTP)</h2>
+            <p>
+                Upload files using the <code class="text-sky-400 font-mono">-T</code> / <code class="text-sky-400 font-mono">--upload-file</code> option via FTP or HTTP PUT.
+            </p>
+            <pre class="p-4 bg-slate-800/80 border border-slate-700/80 rounded-xl text-xs overflow-x-auto leading-normal"><code class="language-bash font-mono"># FTP file upload
+curl -T a.txt -u user:pass ftp://example.com/path
+
+# HTTP PUT upload
+curl -T a.txt http://www.example.com/path</code></pre>
+
+            <!-- 4. Inspecting Response Headers -->
+            <h2 class="text-xl font-bold text-white tracking-tight pt-4">4. Inspecting Response Headers</h2>
+            <p>
+                Use <code class="text-sky-400 font-mono">-I</code> / <code class="text-sky-400 font-mono">--head</code> to fetch response headers only, or <code class="text-sky-400 font-mono">-i</code> / <code class="text-sky-400 font-mono">--include</code> to display headers along with the body.
+            </p>
+            <pre class="p-4 bg-slate-800/80 border border-slate-700/80 rounded-xl text-xs overflow-x-auto leading-normal"><code class="language-bash font-mono">curl -I www.example.com
+# Response snippet:
+# HTTP/1.1 200 OK
+# Server: nginx/1.1.19
+# Date: Mon, 10 Sep 2012 06:17:19 GMT
+# Content-Type: text/html; charset=utf-8
+# Connection: keep-alive</code></pre>
+
+            <!-- 5. Debugging -->
+            <h2 class="text-xl font-bold text-white tracking-tight pt-4">5. Verbose Request Debugging</h2>
+            <p>
+                Use <code class="text-sky-400 font-mono">-v</code> / <code class="text-sky-400 font-mono">--verbose</code> or trace options to inspect request headers, handshakes, and diagnostic logs.
+            </p>
+            <pre class="p-4 bg-slate-800/80 border border-slate-700/80 rounded-xl text-xs overflow-x-auto leading-normal"><code class="language-bash font-mono"># Verbose HTTP connection details
+curl -v www.example.com
+
+# Comprehensive binary and ASCII trace logging to a file
+curl --trace example.txt www.example.com
+curl --trace-ascii example.txt www.example.com</code></pre>
+
+            <!-- 6. Sending GET and POST Data -->
+            <h2 class="text-xl font-bold text-white tracking-tight pt-4">6. Sending GET and Form POST Data</h2>
+            <pre class="p-4 bg-slate-800/80 border border-slate-700/80 rounded-xl text-xs overflow-x-auto leading-normal"><code class="language-bash font-mono"># GET request with query parameters
+curl www.example.com/codes/?page=1
+
+# Form URL-encoded POST request using -d / --data
+curl --data "user=warm&password=lab" www.example.com
+curl --data "month=Aug. 1" www.example.com</code></pre>
+
+            <!-- 7. Referer -->
+            <h2 id="advanced" class="text-xl font-bold text-white tracking-tight pt-4">7. Setting Referer Headers</h2>
+            <p>
+                Simulate navigation sources or bypass basic anti-hotlinking checks using <code class="text-sky-400 font-mono">-e</code> / <code class="text-sky-400 font-mono">--referer</code>.
+            </p>
+            <pre class="p-4 bg-slate-800/80 border border-slate-700/80 rounded-xl text-xs overflow-x-auto leading-normal"><code class="language-bash font-mono">curl -e http://www.example.com www.google.com</code></pre>
+
+            <!-- 8. User-Agent -->
+            <h2 class="text-xl font-bold text-white tracking-tight pt-4">8. Customizing User-Agent</h2>
+            <p>
+                Specify custom client application or browser identity headers with <code class="text-sky-400 font-mono">-A</code> / <code class="text-sky-400 font-mono">--user-agent</code>.
+            </p>
+            <pre class="p-4 bg-slate-800/80 border border-slate-700/80 rounded-xl text-xs overflow-x-auto leading-normal"><code class="language-bash font-mono">curl --user-agent "user agent info" www.example.com</code></pre>
+
+            <!-- 9. Cookies -->
+            <h2 class="text-xl font-bold text-white tracking-tight pt-4">9. Handling Cookies</h2>
+            <p>
+                Pass custom cookie values with <code class="text-sky-400 font-mono">-b</code> / <code class="text-sky-400 font-mono">--cookie</code> or export server-assigned cookies/headers using <code class="text-sky-400 font-mono">-D</code> / <code class="text-sky-400 font-mono">--dump-header</code>.
+            </p>
+            <pre class="p-4 bg-slate-800/80 border border-slate-700/80 rounded-xl text-xs overflow-x-auto leading-normal"><code class="language-bash font-mono"># Send inline cookies
+curl --cookie "key=value" www.example.com
+
+# Dump response headers and cookies to header1.txt
+curl -D header1.txt www.example.com
+
+# Re-use dumped cookie state in a subsequent request
+curl -D header2.txt -b header1.txt www.example.com</code></pre>
+
+            <!-- 10. Custom Request Headers -->
+            <h2 class="text-xl font-bold text-white tracking-tight pt-4">10. Adding Custom HTTP Headers</h2>
+            <pre class="p-4 bg-slate-800/80 border border-slate-700/80 rounded-xl text-xs overflow-x-auto leading-normal"><code class="language-bash font-mono"># Add a custom key-value header
+curl --header "Key: value" http://www.example.com
+
+# Specify content acceptance header
+curl -H "Accept: application/xml" http://www.example.com</code></pre>
+
+            <!-- 11. HTTP Authentication -->
+            <h2 class="text-xl font-bold text-white tracking-tight pt-4">11. HTTP Authentication</h2>
+            <pre class="p-4 bg-slate-800/80 border border-slate-700/80 rounded-xl text-xs overflow-x-auto leading-normal"><code class="language-bash font-mono"># Login with basic authentication credentials
+curl --user "user:pass" http://www.example.com</code></pre>
+
+            <!-- 12. Proxies -->
+            <h2 class="text-xl font-bold text-white tracking-tight pt-4">12. Using Proxy Servers</h2>
+            <pre class="p-4 bg-slate-800/80 border border-slate-700/80 rounded-xl text-xs overflow-x-auto leading-normal"><code class="language-bash font-mono"># Route traffic through a proxy server using -x / --proxy
+curl -x 123.456.789.0:3188 http://www.example.com</code></pre>
+
+            <!-- 13. SSL / HTTPS -->
+            <h2 class="text-xl font-bold text-white tracking-tight pt-4">13. SSL & Certificate Operations</h2>
+            <p>
+                Manage custom CA bundles, self-signed certificates, and mutual TLS (mTLS) authentication.
+            </p>
+            <pre class="p-4 bg-slate-800/80 border border-slate-700/80 rounded-xl text-xs overflow-x-auto leading-normal"><code class="language-bash font-mono"># Standard HTTPS request
+curl https://www.example.com
+
+# Provide a specific CA certificate authority bundle
+curl --cacert cacert.pem https://www.example.com
+
+# Skip SSL/TLS certificate verification (-k / --insecure)
+curl -k https://www.example.com
+
+# Mutual TLS (mTLS) with client certificate and private key
+curl -k --cert client.pem --key client.key https://www.example.com
+curl --cacert cacert.pem -E client.pem --key client.key https://www.example.com</code></pre>
+
+            <!-- 14. Protocol Extras -->
+            <h2 class="text-xl font-bold text-white tracking-tight pt-4">14. Additional Protocols: DICT Lookup</h2>
+            <pre class="p-4 bg-slate-800/80 border border-slate-700/80 rounded-xl text-xs overflow-x-auto leading-normal"><code class="language-bash font-mono"># Query a dictionary server via DICT protocol
+curl dict://dict.org/d:warm</code></pre>
+
+            <!-- 15. Modern REST APIs: JSON & Multipart Form Uploads -->
+            <h2 class="text-xl font-bold text-white tracking-tight pt-4 text-sky-400">15. Modern REST APIs: JSON Payload & Multipart Uploads</h2>
+            <p>
+                For modern Web APIs, sending JSON bodies and multipart form uploads (e.g., uploading images via Web forms) are standard requirements.
+            </p>
+            <pre class="p-4 bg-slate-800/80 border border-slate-700/80 rounded-xl text-xs overflow-x-auto leading-normal"><code class="language-bash font-mono"># Send JSON payload using explicit headers
+curl -X POST https://api.example.com/v1/users \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Alex", "role": "admin"}'
+
+# Modern shorthand for JSON payload (curl 7.82.0+)
+curl --json '{"name": "Alex", "role": "admin"}' https://api.example.com/v1/users
+
+# Multipart Form Upload (multipart/form-data) using -F / --form
+curl -F "username=alex" -F "avatar=@/path/to/image.png" https://example.com/upload
+
+# Specify HTTP method explicitly (-X POST / PUT / PATCH / DELETE)
+curl -X DELETE https://api.example.com/v1/posts/42</code></pre>
+
+            <!-- 16. Performance Benchmarking & Write-Out -->
+            <h2 class="text-xl font-bold text-white tracking-tight pt-4 text-sky-400">16. Performance Benchmarking & Diagnostic Metrics</h2>
+            <p>
+                Use the <code class="text-sky-400 font-mono">-w</code> / <code class="text-sky-400 font-mono">--write-out</code> flag to inspect network timing statistics, such as DNS resolution time, TLS handshake latency, and time-to-first-byte (TTFB).
+            </p>
+            <pre class="p-4 bg-slate-800/80 border border-slate-700/80 rounded-xl text-xs overflow-x-auto leading-normal"><code class="language-bash font-mono"># Measure request latency breakdown
+curl -s -o /dev/null -w "HTTP Status: %{http_code}\nDNS Lookup: %{time_namelookup}s\nConnect Time: %{time_connect}s\nAppConnect (TLS): %{time_appconnect}s\nStart Transfer (TTFB): %{time_starttransfer}s\nTotal Time: %{time_total}s\n" https://www.example.com</code></pre>
+
+            <!-- 17. Scripting Resilience & Rate Control -->
+            <h2 class="text-xl font-bold text-white tracking-tight pt-4 text-sky-400">17. Script Resilience, Timeouts & Rate Control</h2>
+            <pre class="p-4 bg-slate-800/80 border border-slate-700/80 rounded-xl text-xs overflow-x-auto leading-normal"><code class="language-bash font-mono"># Silent execution but display errors (-sS), fail on HTTP errors (-f)
+curl -sSf https://api.example.com/healthcheck
+
+# Enforce connection and operation timeout limits
+curl --connect-timeout 5 -m 15 https://www.example.com
+
+# Automatic request retry on transient failures
+curl --retry 3 --retry-delay 2 https://api.example.com/data
+
+# Throttle maximum bandwidth download rate
+curl --limit-rate 500k -O https://example.com/large-file.zip
+
+# Enforce specific HTTP protocol versions (--http1.1 / --http2 / --http3)
+curl --http2 https://www.example.com</code></pre>
+
+            <!-- 18. libcurl Integration Guide -->
+            <h2 id="libcurl" class="text-2xl font-bold text-white tracking-tight pt-8 border-t border-slate-800 mt-10">18. Introduction to libcurl (C Library)</h2>
+            <p>
+                <code class="text-sky-400 font-mono">libcurl</code> is a free, easy-to-use URL transfer library powering networking functionality across multiple platforms. It supports protocols including DICT, FILE, FTP, FTPS, Gopher, HTTP, HTTPS, IMAP, IMAPS, LDAP, LDAPS, POP3, POP3S, RTMP, RTSP, SCP, SFTP, SMTP, SMTPS, Telnet, and TFTP.
+            </p>
+            <p>
+                <code class="text-sky-400 font-mono">libcurl</code> provides full support for SSL certificates, HTTP POST/PUT operations, FTP/HTTP form uploads, proxies, cookies, user authentication schemes (Basic, Digest, NTLM, Negotiate, Kerberos), resumed downloads, and HTTP proxy tunneling. Downloads for supported OS platforms are available at <a href="http://curl.haxx.se/libcurl/" target="_blank" class="text-sky-400 underline hover:text-sky-300 font-mono">http://curl.haxx.se/libcurl/</a>.
+            </p>
+
+            <h3 class="text-lg font-bold text-white tracking-tight pt-3">Build & Project Setup</h3>
+            <ul class="list-disc list-inside space-y-2 text-slate-300 pl-2">
+                <li><strong class="text-white">iOS Development (Xcode):</strong> Download the iOS binaries, import the two <code class="text-sky-400 font-mono">.a</code> library files and header files into your Xcode project. Update <code class="text-sky-400 font-mono">Header Search Paths</code> and <code class="text-sky-400 font-mono">Library Search Paths</code> in Build Settings to ensure proper compiler resolution.</li>
+                <li><strong class="text-white">Linux Compilation:</strong> Link <code class="text-sky-400 font-mono">libcurl</code> using the compiler flag <code class="text-sky-400 font-mono">-lcurl</code> or retrieve linker flags directly via <code class="text-sky-400 font-mono">curl-config --libs</code>.</li>
+            </ul>
+
+            <h3 class="text-lg font-bold text-white tracking-tight pt-3">C Example: Basic HTTPS Request with File Output</h3>
+            <pre class="p-4 bg-slate-800/80 border border-slate-700/80 rounded-xl text-xs overflow-x-auto leading-normal"><code class="language-c font-mono">#include &lt;stdio.h&gt;
+#include &lt;curl/curl.h&gt;
+
+int main(void)
+{
+    CURL *curl;
+    CURLcode rc;
+
+    curl_global_init(CURL_GLOBAL_DEFAULT);
+
+    curl = curl_easy_init();
+    if (curl) {
+        curl_easy_setopt(curl, CURLOPT_URL, "https://www.example.com");
+        curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1L);
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 2L);
+
+        curl_easy_setopt(curl, CURLOPT_SSLCERT, "client.pem");
+        curl_easy_setopt(curl, CURLOPT_SSLKEY, "client.key");
+        curl_easy_setopt(curl, CURLOPT_CAINFO, "servercacert.pem");
+
+        FILE *fp = fopen("data", "w");
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, fwrite);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
+
+        rc = curl_easy_perform(curl);
+        if (rc != CURLE_OK) {
+            fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(rc));
+        }
+
+        fclose(fp);
+        curl_easy_cleanup(curl);
+    }
+
+    curl_global_cleanup();
+    return 0;
+}</code></pre>
+
+            <!-- 19. libcurl In-Memory Dynamic Response Buffer -->
+            <h3 id="libcurl-memory" class="text-lg font-bold text-white tracking-tight pt-4 text-sky-400">19. libcurl C Advanced: Receiving Responses into Memory Buffer</h3>
+            <p>
+                In real-world application code, HTTP responses are rarely written to disk files. Instead, they are parsed directly in memory. The following callback dynamically grows a memory buffer using <code class="text-sky-400 font-mono">realloc</code>.
+            </p>
+
+            <pre class="p-4 bg-slate-800/80 border border-slate-700/80 rounded-xl text-xs overflow-x-auto leading-normal"><code class="language-c font-mono">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;curl/curl.h&gt;
+
+struct MemoryStruct {
+    char *memory;
+    size_t size;
+};
+
+static size_t WriteMemoryCallback(void *contents, size_t size, size_t nmemb, void *userp)
+{
+    size_t realsize = size * nmemb;
+    struct MemoryStruct *mem = (struct MemoryStruct *)userp;
+
+    char *ptr = realloc(mem->memory, mem->size + realsize + 1);
+    if (!ptr) return 0; // Out of memory
+
+    mem->memory = ptr;
+    memcpy(&(mem->memory[mem->size]), contents, realsize);
+    mem->size += realsize;
+    mem->memory[mem->size] = 0; // Null-terminate string
+
+    return realsize;
+}
+
+int fetch_json_api(void)
+{
+    CURL *curl_handle = curl_easy_init();
+    struct MemoryStruct chunk = { malloc(1), 0 };
+
+    if (curl_handle) {
+        curl_easy_setopt(curl_handle, CURLOPT_URL, "https://api.example.com/v1/data");
+        curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
+        curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&chunk);
+
+        if (curl_easy_perform(curl_handle) == CURLE_OK) {
+            printf("Fetched %lu bytes:\n%s\n", (unsigned long)chunk.size, chunk.memory);
+        }
+
+        curl_easy_cleanup(curl_handle);
+    }
+    free(chunk.memory);
+    return 0;
+}</code></pre>
+
+            <!-- 20. libcurl Custom Headers & Multi Interface -->
+            <h3 class="text-lg font-bold text-white tracking-tight pt-4 text-sky-400">20. libcurl C Advanced: Headers (`curl_slist`) & Async Multi Interface</h3>
+            <p>
+                To supply HTTP headers (e.g. <code class="text-sky-400 font-mono">Content-Type: application/json</code>), build a linked list using <code class="text-sky-400 font-mono">curl_slist_append</code>. For non-blocking parallel HTTP requests in C, use the <code class="text-sky-400 font-mono">curl_multi_*</code> interface.
+            </p>
+
+            <pre class="p-4 bg-slate-800/80 border border-slate-700/80 rounded-xl text-xs overflow-x-auto leading-normal"><code class="language-c font-mono">// 1. Setting Custom HTTP Headers in C
+struct curl_slist *headers = NULL;
+headers = curl_slist_append(headers, "Content-Type: application/json");
+headers = curl_slist_append(headers, "Authorization: Bearer YOUR_TOKEN");
+
+curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "{\"key\":\"value\"}");
+
+// Perform request...
+
+curl_slist_free_all(headers); // Free header list memory after completion
+
+// 2. Overview of Non-blocking Concurrent Transfers (curl_multi)
+CURLM *multi_handle = curl_multi_init();
+curl_multi_add_handle(multi_handle, easy_handle_1);
+curl_multi_add_handle(multi_handle, easy_handle_2);
+
+int still_running = 0;
+do {
+    curl_multi_perform(multi_handle, &still_running);
+} while (still_running);
+
+curl_multi_cleanup(multi_handle);</code></pre>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="pt-8 border-t border-slate-800 text-xs text-slate-500 flex justify-between items-center">
+        <p>© 2026 Alex. Built with Tailwind CSS & GitHub Pages.</p>
+        <a href="../index.html" class="text-slate-400 hover:text-sky-400 transition">← Home</a>
+    </footer>
+</div>
+
+</body>
+</html>

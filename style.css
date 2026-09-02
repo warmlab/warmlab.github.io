@@ -20,3 +20,14 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #475569;
 }
+
+/* 将 Tailwind 的 font-mono 优先指定为 Intel One Mono */
+.font-mono {
+  font-family: 'Intel One Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+}
+
+/* 保持 Highlight.js 背景透明与常规内边距设置 */
+.hljs {
+  background: transparent !important;
+  padding: 0 !important;
+}

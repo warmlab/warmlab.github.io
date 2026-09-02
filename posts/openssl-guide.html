@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpenSSL C Programming & BIO Abstraction Guide</title>
+  <meta name="description" content="A complete guide to OpenSSL C programming, BIO abstraction, unencrypted and encrypted (TLS/SSL) client-server architectures, and error diagnostics.">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Highlight.js Syntax Highlighting (Tokyo Night Dark Theme) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css">
+  <!-- 引入 Intel One Mono 字体库 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="../style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Intel+One+Mono:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/c.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      hljs.highlightAll();
+    });
+  </script>
+
+  <style>
+    /* Custom override to match code background seamlessly with Tailwind theme */
+    .hljs {
+      background: transparent !important;
+      padding: 0 !important;
+    }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 antialiased selection:bg-sky-500 selection:text-white min-h-screen flex flex-col justify-between">
+
+<div class="max-w-4xl mx-auto px-6 py-8 w-full">
+  <header class="flex justify-between items-center pb-6 border-b border-slate-800">
+    <a href="../index.html" class="text-xl font-bold tracking-tight text-white hover:text-sky-400 transition">
+      Xusheng (Alex)<span class="text-sky-400">.Li</span>
+    </a>
+    <nav class="flex gap-6 text-sm font-medium text-slate-400">
+      <a href="../index.html#articles" class="hover:text-sky-400 transition">Articles</a>
+      <a href="../index.html#focus" class="hover:text-sky-400 transition">Core Focus</a>
+      <a href="../about.html" class="hover:text-sky-400 transition">About</a>
+    </nav>
+  </header>
+
+  <!-- Main Content -->
+  <main class="py-10">
+    <a href="../index.html#articles" class="text-sky-400 text-sm font-semibold hover:underline flex items-center gap-1 mb-4">← Back to Articles</a>
+    <header class="mb-8 border-b border-slate-800 pb-6">
+      <span class="text-xs font-semibold uppercase tracking-wider text-sky-400">C Network Programming & Security</span>
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mt-2 mb-3">
+        OpenSSL C Programming Guide: BIO Abstraction & TLS Connections
+      </h1>
+      <p class="text-xs text-slate-500">Updated: September 2026 • Merged & Enhanced Reference Manual</p>
+    </header>
+
+    <article class="space-y-8 text-slate-300 text-base leading-relaxed">
+
+      <!-- 1. Overview & Introduction -->
+      <section id="overview" class="space-y-4">
+        <h2 class="text-xl font-bold text-white tracking-tight pt-2">1. Overview of OpenSSL & The BIO Abstraction</h2>
+        <p>
+          OpenSSL is the premier open-source library for secure network communication. Originating in 1998 from the SSLeay library developed by Eric Young and Tim Hudson, OpenSSL provides robust cryptographic functions and implements the SSL/TLS protocols.
+        </p>
+        <p>
+          Data in transit across raw sockets can be intercepted or eavesdropped. Unencrypted plain text exposes sensitive payloads directly. While cryptography encrypts data to protect privacy, OpenSSL simplifies network I/O through an abstraction layer called <strong>BIO (Basic I/O)</strong>.
+        </p>
+        <p>
+          The BIO abstraction hides the underlying platform-specific socket or file complexities. A BIO can represent a TCP socket, an in-memory buffer, a file on disk, or a filter pipeline (such as Base64 encoding or TLS encryption).
+        </p>
+      </section>
+
+      <!-- 2. Unencrypted Connection API Reference -->
+      <section id="bio-api" class="space-y-4">
+        <h2 class="text-xl font-bold text-white tracking-tight pt-4 border-t border-slate-800">2. Key BIO Functions for Unencrypted Connections</h2>
+        <p>
+          Before creating connections, you work with pointers to <code class="text-sky-400 font-mono">BIO</code> objects, conceptually similar to C standard library <code class="text-sky-400 font-mono">FILE*</code> streams.
+        </p>
+
+        <ul class="list-disc list-inside space-y-2 text-slate-300 pl-2">
+          <li><code class="text-sky-400 font-mono">BIO *BIO_new(const BIO_METHOD *type)</code>: Instantiates a new BIO using a specific type (e.g., <code class="text-sky-400">BIO_s_mem()</code>, <code class="text-sky-400">BIO_s_connect()</code>, <code class="text-sky-400 font-mono">BIO_s_accept()</code>).</li>
+          <li><code class="text-sky-400 font-mono">BIO *BIO_new_connect(const char *host_port)</code>: Creates a connection BIO targeting <code class="text-sky-400 font-mono">"hostname:port"</code>.</li>
+          <li><code class="text-sky-400 font-mono">BIO *BIO_new_accept(const char *host_port)</code>: Creates an listening BIO bound to <code class="text-sky-400 font-mono">"host:port"</code> (use <code class="text-sky-400 font-mono">"*"</code> or <code class="text-sky-400 font-mono">"0.0.0.0"</code> to accept connections on all interfaces).</li>
+          <li><code class="text-sky-400 font-mono">long BIO_set_conn_hostname(BIO *b, char *name)</code>: Dynamically sets the target remote host and port.</li>
+          <li><code class="text-sky-400 font-mono">long BIO_set_accept_port(BIO *b, char *name)</code>: Dynamically configures the server listening port.</li>
+          <li><code class="text-sky-400 font-mono">int BIO_do_connect(BIO *b)</code>: Establishes a TCP connection to the remote target. Returns <code class="text-sky-400 font-mono">1</code> on success, or <code class="text-sky-400 font-mono">&le; 0</code> on failure.</li>
+          <li><code class="text-sky-400 font-mono">int BIO_do_accept(BIO *b)</code>: On first call, binds the socket and starts listening. Subsequent calls wait for and accept incoming client connections.</li>
+          <li><code class="text-sky-400 font-mono">int BIO_read(BIO *b, void *buf, int len)</code> / <code class="text-sky-400">int BIO_write(BIO *b, const void *buf, int len)</code>: Performs I/O operations across sockets or filters. Returns number of bytes read/written, <code class="text-sky-400 font-mono">0</code> (closed), or <code class="text-sky-400 font-mono">-1</code> (error/retry).</li>
+          <li><code class="text-sky-400 font-mono">int BIO_should_retry(BIO *b)</code>: Determines whether a failed read/write was non-fatal and should be re-attempted.</li>
+          <li><code class="text-sky-400 font-mono">void BIO_reset(BIO *b)</code>: Flushes buffers and resets internal state to reuse the BIO handle.</li>
+          <li><code class="text-sky-400 font-mono">void BIO_free_all(BIO *b)</code>: Recursively frees the entire BIO chain and closes underlying sockets/files.</li>
+        </ul>
+      </section>
+
+      <!-- 3. Unencrypted Client & Server Code -->
+      <section id="unencrypted" class="space-y-4">
+        <h2 class="text-xl font-bold text-white tracking-tight pt-4 border-t border-slate-800">3. Plain Non-SSL Socket Communication via BIO</h2>
+        <p>
+          The following examples demonstrate client and server applications using OpenSSL's BIO interface without encryption overhead.
+        </p>
+
+        <h3 class="text-lg font-bold text-white tracking-tight pt-2">Server Code (<code class="text-sky-400 font-mono">server.c</code>)</h3>
+        <p class="text-sm">Listens on port 8080, reads an incoming string from a client, appends <code class="text-sky-400 font-mono">"-Server"</code>, writes it back, and exits.</p>
+        <pre class="p-4 bg-slate-800/80 border border-slate-700/80 rounded-xl text-xs overflow-x-auto leading-normal"><code class="language-c font-mono">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;openssl/bio.h&gt;
+#include &lt;openssl/err.h&gt;
+
+int main(int argc, char *argv[]) {
+    char *buf;
+    size_t len = 1024;
+    BIO *bio;
+
+    // Create an accept BIO listening on all interfaces at port 8080
+    bio = BIO_new_accept("0.0.0.0:8080");
+    if (!bio) {
+        printf("BIO_new_accept error: %s\n", ERR_reason_error_string(ERR_get_error()));
+        exit(1);
+    }
+
+    // Bind and listen on socket
+    if (BIO_do_accept(bio) &lt;= 0) {
+        printf("BIO_do_accept error: %s\n", ERR_reason_error_string(ERR_get_error()));
+        BIO_free(bio);
+        exit(2);
+    }
+
+    // Wait for incoming client connection
+    if (BIO_do_accept(bio) &lt;= 0) {
+        printf("Error accepting client connection\n");
+        BIO_free_all(bio);
+        exit(3);
+    }
+
+    buf = malloc(len);
+    if (!buf) {
+        perror("malloc");
+        BIO_free_all(bio);
+        exit(4);
+    }
+
+    int x = BIO_read(bio, buf, len - 1);
+    if (x == 0) {
+        printf("Connection closed by peer\n");
+        BIO_free_all(bio);
+        exit(5);
+    } else if (x &lt; 0) {
+        if (!BIO_should_retry(bio)) {
+            printf("Read error cannot be retried\n");
+            BIO_free_all(bio);
+            exit(6);
+        }
+    }
+
+    buf[x] = '\0';
+    strcat(buf, "-Server");
+
+    x = BIO_write(bio, buf, (int)strlen(buf));
+    if (x &lt;= 0) {
+        if (!BIO_should_retry(bio)) {
+            printf("Write failed\n");
+        }
+    }
+
+    free(buf);
+    BIO_free_all(bio);
+    return 0;
+}</code></pre>
+
+        <h3 class="text-lg font-bold text-white tracking-tight pt-2">Client Code (<code class="text-sky-400 font-mono">client.c</code>)</h3>
+        <p class="text-sm">Connects to a target server, sends <code class="text-sky-400 font-mono">"abcdefgh"</code>, receives the response, and prints it.</p>
+        <pre class="p-4 bg-slate-800/80 border border-slate-700/80 rounded-xl text-xs overflow-x-auto leading-normal"><code class="language-c font-mono">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;openssl/bio.h&gt;
+#include &lt;openssl/err.h&gt;
+
+int main(int argc, char *argv[]) {
+    char *buf;
+    size_t len = 1024;
+    BIO *bio;
+
+    if (argc &lt; 2) {
+        printf("Usage: %s &lt;ip:port&gt;\n", argv[0]);
+        exit(1);
+    }
+
+    bio = BIO_new_connect(argv[1]);
+    if (!bio) {
+        printf("Failed to create connect BIO\n");
+        exit(2);
+    }
+
+    if (BIO_do_connect(bio) &lt;= 0) {
+        printf("Connection failed\n");
+        BIO_free_all(bio);
+        exit(3);
+    }
+
+    buf = malloc(len);
+    if (!buf) {
+        perror("malloc");
+        BIO_free_all(bio);
+        exit(4);
+    }
+
+    int x = BIO_write(bio, "abcdefgh", 8);
+    if (x &lt;= 0) {
+        if (!BIO_should_retry(bio)) {
+            printf("Write error\n");
+            BIO_free_all(bio);
+            exit(5);
+        }
+    }
+
+    x = BIO_read(bio, buf, len - 1);
+    if (x == 0) {
+        printf("Connection closed\n");
+    } else if (x &lt; 0) {
+        if (!BIO_should_retry(bio)) {
+            printf("Read error\n");
+        }
+    } else {
+        buf[x] = '\0';
+        printf("Received from server: %s\n", buf);
+    }
+
+    free(buf);
+    BIO_free_all(bio);
+    return 0;
+}</code></pre>
+
+        <h3 class="text-lg font-bold text-white tracking-tight pt-2">Compilation & Execution</h3>
+        <pre class="p-4 bg-slate-800/80 border border-slate-700/80 rounded-xl text-xs overflow-x-auto leading-normal"><code class="language-bash font-mono"># Compile Server and Client
+gcc -o server server.c -lssl -lcrypto
+gcc -o client client.c -lssl -lcrypto
+
+# Run Server in background or separate terminal
+./server &
+
+# Execute Client
+./client 127.0.0.1:8080
+# Output: Received from server: abcdefgh-Server</code></pre>
+      </section>
+
+      <!-- 4. Secure TLS/SSL Concepts -->
+      <section id="tls-ssl" class="space-y-4">
+        <h2 class="text-xl font-bold text-white tracking-tight pt-4 border-t border-slate-800">4. Securing Connections with SSL/TLS</h2>
+        <p>
+          Secure sockets demand a cryptographic handshake. During handshake, the server delivers its X.509 certificate to the client, which verifies validity against loaded trusted Certification Authority (CA) root stores.
+        </p>
+
+        <h3 class="text-lg font-bold text-white tracking-tight pt-2">SSL Context & Handles</h3>
+        <p>
+          Two key pointers govern TLS operations: <code class="text-sky-400 font-mono">SSL_CTX</code> (holds configuration, certificates, and keys) and <code class="text-sky-400 font-mono">SSL</code> (manages active connection states).
+        </p>
+
+        <pre class="p-4 bg-slate-800/80 border border-slate-700/80 rounded-xl text-xs overflow-x-auto leading-normal"><code class="language-c font-mono">/* Initialize context using flexible TLS method */
+const SSL_METHOD *method = TLS_client_method(); // Modern replacement for SSLv23_client_method
+SSL_CTX *ctx = SSL_CTX_new(method);
+
+if (!ctx) {
+    ERR_print_errors_fp(stderr);
+    exit(EXIT_FAILURE);
+}</code></pre>
+
+        <h3 class="text-lg font-bold text-white tracking-tight pt-2">Loading Trusted Certificate Stores</h3>
+        <p>
+          Use <code class="text-sky-400 font-mono">SSL_CTX_load_verify_locations()</code> to specify trusted CA bundles or directories. When using a directory of certificates, prepare hash symlinks using OpenSSL's <code class="text-sky-400 font-mono">c_rehash</code> tool.
+        </p>
+        <pre class="p-4 bg-slate-800/80 border border-slate-700/80 rounded-xl text-xs overflow-x-auto leading-normal"><code class="language-bash font-mono"># Prepare directory hash links via OpenSSL CLI
+c_rehash /path/to/certfolder</code></pre>
+
+        <pre class="p-4 bg-slate-800/80 border border-slate-700/80 rounded-xl text-xs overflow-x-auto leading-normal"><code class="language-c font-mono">/* Load CA certificates bundle file or directory */
+if (!SSL_CTX_load_verify_locations(ctx, "/etc/ssl/certs/ca-certificates.crt", "/path/to/certfolder")) {
+    ERR_print_errors_fp(stderr);
+}</code></pre>
+
+        <h3 class="text-lg font-bold text-white tracking-tight pt-2">Combining BIO with TLS</h3>
+        <p>
+          OpenSSL provides <code class="text-sky-400 font-mono">BIO_new_ssl_connect()</code> to transparently layer SSL encryption over socket streams:
+        </p>
+        <pre class="p-4 bg-slate-800/80 border border-slate-700/80 rounded-xl text-xs overflow-x-auto leading-normal"><code class="language-c font-mono">BIO *bio = BIO_new_ssl_connect(ctx);
+SSL *ssl;
+
+// Extract internal SSL pointer to configure TLS flags
+BIO_get_ssl(bio, &ssl);
+SSL_set_mode(ssl, SSL_MODE_AUTO_RETRY);
+
+// Set destination and execute handshake
+BIO_set_conn_hostname(bio, "example.com:443");
+if (BIO_do_connect(bio) &lt;= 0) {
+    /* Handle TLS handshake failure */
+}
+
+// Verify X.509 Certificate validity
+if (SSL_get_verify_result(ssl) != X509_V_OK) {
+    printf("Certificate verification warning code: %ld\n", SSL_get_verify_result(ssl));
+}</code></pre>
+      </section>
+
+      <!-- 5. Secure TLS Server Implementation -->
+      <section id="secure-server" class="space-y-4">
+        <h2 class="text-xl font-bold text-white tracking-tight pt-4 border-t border-slate-800 text-sky-400">5. Complete Secure TLS Server Example</h2>
+        <p>
+          While basic BIO accept sockets handle unencrypted TCP, a production TLS server must bind server certificates (<code class="text-sky-400 font-mono">server.crt</code>) and private keys (<code class="text-sky-400 font-mono">server.key</code>) to perform SSL handshakes.
+        </p>
+
+        <pre class="p-4 bg-slate-800/80 border border-slate-700/80 rounded-xl text-xs overflow-x-auto leading-normal"><code class="language-c font-mono">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;openssl/bio.h&gt;
+#include &lt;openssl/ssl.h&gt;
+#include &lt;openssl/err.h&gt;
+
+void init_openssl(void) {
+    SSL_load_error_strings();
+    OpenSSL_add_ssl_algorithms();
+}
+
+SSL_CTX *create_server_context(void) {
+    const SSL_METHOD *method = TLS_server_method();
+    SSL_CTX *ctx = SSL_CTX_new(method);
+    if (!ctx) {
+        ERR_print_errors_fp(stderr);
+        exit(EXIT_FAILURE);
+    }
+    return ctx;
+}
+
+void configure_context(SSL_CTX *ctx) {
+    // Load SSL certificate and private key
+    if (SSL_CTX_use_certificate_file(ctx, "server.crt", SSL_FILETYPE_PEM) &lt;= 0) {
+        ERR_print_errors_fp(stderr);
+        exit(EXIT_FAILURE);
+    }
+    if (SSL_CTX_use_PrivateKey_file(ctx, "server.key", SSL_FILETYPE_PEM) &lt;= 0) {
+        ERR_print_errors_fp(stderr);
+        exit(EXIT_FAILURE);
+    }
+}
+
+int main(void) {
+    init_openssl();
+    SSL_CTX *ctx = create_server_context();
+    configure_context(ctx);
+
+    BIO *bio = BIO_new_ssl_connect(ctx);
+    // Alternatively set up listening BIO chained with SSL filter...
+    printf("TLS Server Context configured successfully.\n");
+
+    SSL_CTX_free(ctx);
+    EVP_cleanup();
+    return 0;
+}</code></pre>
+      </section>
+
+      <!-- 6. Error Diagnostics -->
+      <section id="errors" class="space-y-4">
+        <h2 class="text-xl font-bold text-white tracking-tight pt-4 border-t border-slate-800">6. Diagnostic Error Handling</h2>
+        <p>
+          OpenSSL maintains an internal thread-local error queue. When an operation returns a failure status, use error diagnostic APIs to retrieve exact codes and textual descriptions.
+        </p>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse border border-slate-800 text-xs">
+            <thead>
+            <tr class="bg-slate-800/60 text-white border-b border-slate-700">
+              <th class="p-3">API Function</th>
+              <th class="p-3">Description</th>
+            </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800 text-slate-300 font-mono">
+            <tr>
+              <td class="p-3 text-sky-400">ERR_get_error()</td>
+              <td class="p-3 font-sans">Pulls the earliest error code from the error queue.</td>
+            </tr>
+            <tr>
+              <td class="p-3 text-sky-400">ERR_reason_error_string(code)</td>
+              <td class="p-3 font-sans">Returns a human-readable string explaining the root cause.</td>
+            </tr>
+            <tr>
+              <td class="p-3 text-sky-400">ERR_lib_error_string(code)</td>
+              <td class="p-3 font-sans">Identifies the specific OpenSSL library subsystem where the error occurred.</td>
+            </tr>
+            <tr>
+              <td class="p-3 text-sky-400">ERR_func_error_string(code)</td>
+              <td class="p-3 font-sans">Identifies the OpenSSL function that triggered the error.</td>
+            </tr>
+            <tr>
+              <td class="p-3 text-sky-400">ERR_error_string(code, buf)</td>
+              <td class="p-3 font-sans">Formats complete error string into a 256-byte character buffer.</td>
+            </tr>
+            <tr>
+              <td class="p-3 text-sky-400">ERR_print_errors_fp(FILE*)</td>
+              <td class="p-3 font-sans">Dumps full error stack to a C file handle (e.g. <code class="text-sky-400 font-mono">stderr</code>).</td>
+            </tr>
+            <tr>
+              <td class="p-3 text-sky-400">ERR_print_errors(BIO*)</td>
+              <td class="p-3 font-sans">Dumps full error queue directly into an OpenSSL BIO handle.</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="text-sm pt-2">
+          Formatted error output follows this standard representation:
+        </p>
+        <pre class="p-4 bg-slate-800/80 border border-slate-700/80 rounded-xl text-xs overflow-x-auto leading-normal"><code class="language-bash font-mono">[pid]:error:[error code]:[library name]:[function name]:[reason string]:[file name]:[line]:[optional text message]</code></pre>
+      </section>
+
+      <!-- 7. Modern Best Practices -->
+      <section id="best-practices" class="space-y-4">
+        <h2 class="text-xl font-bold text-white tracking-tight pt-4 border-t border-slate-800 text-sky-400">7. Modern OpenSSL Best Practices</h2>
+        <ul class="list-disc list-inside space-y-2 text-slate-300 pl-2">
+          <li><strong class="text-white">API Modernization:</strong> Avoid legacy methods like <code class="text-sky-400 font-mono">SSLv23_client_method()</code> or explicitly forcing SSLv3/TLSv1.0. Use generic <code class="text-sky-400 font-mono">TLS_client_method()</code> or <code class="text-sky-400 font-mono">TLS_server_method()</code>.</li>
+          <li><strong class="text-white">Enforce Minimum Protocol Version:</strong> Secure applications should enforce TLS 1.2 or TLS 1.3 explicitly:
+            <pre class="mt-2 p-3 bg-slate-800/80 border border-slate-700/80 rounded-lg text-xs"><code class="language-c font-mono">SSL_CTX_set_min_proto_version(ctx, TLS1_2_VERSION);</code></pre>
+          </li>
+          <li><strong class="text-white">OpenSSL 1.1.1+ / 3.0+ Automatic Initialization:</strong> Library initialization calls like <code class="text-sky-400 font-mono">SSL_library_init()</code> or <code class="text-sky-400 font-mono">SSL_load_error_strings()</code> are automatically handled internally in modern OpenSSL releases.</li>
+          <li><strong class="text-white">Hostname Verification:</strong> Always enable automatic SNI (Server Name Indication) and hostname validation to prevent Man-in-the-Middle (MitM) attacks:
+            <pre class="mt-2 p-3 bg-slate-800/80 border border-slate-700/80 rounded-lg text-xs"><code class="language-c font-mono">SSL_set_tlsext_host_name(ssl, "example.com");
+X509_VERIFY_PARAM *param = SSL_get0_param(ssl);
+X509_VERIFY_PARAM_set1_host(param, "example.com", 0);</code></pre>
+          </li>
+        </ul>
+      </section>
+
+    </article>
+  </main>
+
+  <!-- Footer -->
+  <footer class="pt-8 border-t border-slate-800 text-xs text-slate-500 flex justify-between items-center">
+    <p>© 2026 Alex. Built with Tailwind CSS & GitHub Pages.</p>
+    <a href="../index.html" class="text-slate-400 hover:text-sky-400 transition">← Home</a>
+  </footer>
+</div>
+
+</body>
+</html>
